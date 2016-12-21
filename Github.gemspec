@@ -33,6 +33,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.13"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "minitest", "~> 5.0"
-spec.add_dependency 'mushin'
-end
+  spec.add_dependency 'mushin'
+  spec.add_dependency "octokit", "~> 4.0"
+  spec.add_dependency "rugged", "~> 0.24.0"
 
+end
