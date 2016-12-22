@@ -11,6 +11,11 @@ module Github
       @opts 	= opts
       @params 	= params 
     end
+
+    def check_params *keys
+      return (keys.all? {|key| (@params.key?(key) && !@params[key].nil?)})
+    end
+
     def call env 
       env ||= Hash.new 
 
@@ -26,17 +31,16 @@ module Github
 	env[:login] 	= user.login
 
 	#TODO in case of private repos the clone_url should be prefixed with a token and passed to other domain extenstions to handle the local work
-	if !@params[:username].nil? && !@params[:reponame].nil? then 
+	if check_params(:username, :reponame) then 
 	  @slug 		= @params[:username] + "/" + @params[:reponame] 
-	  env[:slug]		= @slug
-	  env[:repo_metadata]	= @client.repo(@slug).to_h
-	  env[:clone_url] 	= @client.repo(@slug).clone_url
-	elsif !@params[:slug].nil? then 
+	elsif check_params(:slug) then 
 	  @slug 		= @params[:slug] 
-	  env[:slug]		= @slug
-	  env[:repo_metadata]	= @client.repo(@slug).to_h
-	  env[:clone_url] 	= @client.repo(@slug).clone_url
 	end
+
+	env[:slug]		= @slug
+	env[:repo_metadata]	= @client.repo(@slug).to_h 		unless @slug.nil?
+	env[:clone_url] 	= @client.repo(@slug).clone_url 	unless @slug.nil?
+
 	@app.call(env)
 	#outbound code
       else

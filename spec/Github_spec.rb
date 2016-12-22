@@ -47,4 +47,14 @@ describe "Github" do
     @env[:clone_url].must_equal "https://github.com/#{@slug}.git"
   end
 
+  it "doesn't raise an error if both username/reponame and a slug are nil or empty" do
+    opts 	= {:cqrs => :cqrs_command, :auth_username => @secrets["github"]["login"], :auth_password => @secrets["github"]["password"]}
+    params 	= {:username => nil, :reponame => nil, :slug => nil}
+    @ext 	= Github::Ext.new(Proc.new {}, opts, params)
+
+    @ext.call(@env)
+    @env[:repo_metadata].must_be_nil
+    @env[:clone_url].must_be_nil
+  end
+
 end
